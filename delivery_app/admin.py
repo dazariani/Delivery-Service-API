@@ -25,9 +25,9 @@ class CustomUserAdmin(UserAdmin):
   )
 
   add_fieldsets = (
-          (None, {'fields': ('username', 'password1', 'password2',
-                              'admin', 'customer', 'courier',)}),
-      )
+    (None, {'fields': ('username', 'password1', 'password2',
+                        'admin', 'customer', 'courier',)}),
+    )
 
 
 admin.site.register(CustomUser, CustomUserAdmin)

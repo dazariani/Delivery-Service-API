@@ -22,6 +22,7 @@ class ParcelSerializer(serializers.ModelSerializer):
   class Meta:
     model = Parcel
     fields = '__all__'  
+    read_only_fields = ('title', 'description', 'sender', 'receiver_name', 'courier', 'receiver_address', 'created_at')
 
 
 class DeliveryProofSerializer(serializers.ModelField):
