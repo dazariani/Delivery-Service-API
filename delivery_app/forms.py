@@ -4,6 +4,9 @@ from .models import CustomUser
 
 
 class CustomUserCreationForm(UserCreationForm):
+
+  usable_password = None
+
   class Meta:
     model = CustomUser
-    fields = "__all__"
+    fields = ["username", "password1", "password2"]
