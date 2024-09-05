@@ -18,14 +18,41 @@ class CustomUserSerializer(serializers.ModelSerializer):
     return instance
   
 
-class ParcelSerializer(serializers.ModelSerializer):
+
+# Parcel serializers
+class ForCustomerSerializerUpdate(serializers.ModelSerializer):
+
   class Meta:
     model = Parcel
-    fields = '__all__'  
-    read_only_fields = ('title', 'description', 'sender', 'receiver_name', 'courier', 'receiver_address', 'created_at')
+    fields = '__all__'
+    read_only_fields = ('title', 'description', 'sender', 'receiver_name', 'status', 'courier', 'receiver_address', 'created_at')
 
 
-class DeliveryProofSerializer(serializers.ModelField):
+
+class ForCustomerSerializerWrite(serializers.ModelSerializer):
+  sender = serializers.PrimaryKeyRelatedField(default=serializers.CurrentUserDefault(), queryset=CustomUser.objects.all())
+
+  class Meta:
+    model = Parcel
+    fields = '__all__'
+    
+
+
+class ForCourierSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Parcel
+    fields = '__all__'
+    read_only_fields = ('title', 'description', 'sender', 'receiver_name', 'delivered_at', 'courier', 'receiver_address', 'created_at')
+
+
+class ForAdminSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Parcel
+    fields = '__all__'
+
+
+# Delivery proof serializers
+class DeliveryProofSerializer(serializers.ModelSerializer):
   class Meta:
     model = DeliveryProof
     fields = '__all__'

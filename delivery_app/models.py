@@ -22,7 +22,7 @@ class Parcel(models.Model):
   sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE) 
   receiver_name = models.CharField(max_length=50)
   receiver_address = models.TextField(max_length=150)
-  courier = models.ForeignKey(CustomUser, related_name='courier_parcels', null=True, blank=True, on_delete=models.CASCADE) 
+  courier = models.ForeignKey(CustomUser, related_name='courier_parcels', on_delete=models.CASCADE) 
   created_at = models.DateTimeField(auto_now_add=True)
   delivered_at = models.DateTimeField(null=True, blank=True)
 

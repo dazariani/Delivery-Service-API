@@ -20,7 +20,44 @@ class ParcelPermissionObjLevel(permissions.BasePermission):
       return True
     
 
-# class ParcelPermissionModelLevel(permissions.BasePermission):
+class ParcelPermissionModelLevel(permissions.BasePermission):
+
+  def has_permission(self, request, view):
+    if(request.method == 'POST' and request.user.customer == False and request.user.admin == False):
+      return False
+    if(view.action == 'list' and request.user.customer):
+      return False
+    return True
+  
+
+# Delivery proof permissions
+class ProofPermissionObjLevel(permissions.BasePermission):
+
+  def has_object_permission(self, request, view, obj):
+
+    # courier
+    if request.user.courier and obj.parcel.courier.id == request.user.id and request.method in permissions.SAFE_METHODS:
+      return True
+    
+    # customer
+    if request.user.customer and obj.parcel.sender.id == request.user.id and request.method in permissions.SAFE_METHODS:
+      return True
+    
+    # admin 
+    if request.user.admin:
+      return True
+    
+
+class ProofPermissionModelLevel(permissions.BasePermission):
+
+  def has_permission(self, request, view):
+    if(request.method == 'POST' and request.user.courier == False and request.user.admin == False):
+      return False
+    return True
+
+
+
+    
 
 
 

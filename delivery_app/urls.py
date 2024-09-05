@@ -8,8 +8,8 @@ from rest_framework_simplejwt.views import (
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet)
-router.register(r'parcels', ParcelViewSet)
-router.register(r'deliveryProofs', DeliveryProofViewSet)
+router.register(r'parcels', ParcelViewSet, basename='ParcelModel')
+router.register(r'deliveryProofs', DeliveryProofViewSet, basename='ProofModel')
 
 urlpatterns = [
     path('', include(router.urls)),
