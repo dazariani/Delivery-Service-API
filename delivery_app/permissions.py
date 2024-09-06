@@ -54,6 +54,25 @@ class ProofPermissionModelLevel(permissions.BasePermission):
     if(request.method == 'POST' and request.user.courier == False and request.user.admin == False):
       return False
     return True
+  
+
+# User permissions
+class UserPermissionObjLevel(permissions.BasePermission):
+
+  def has_object_permission(self, request, view, obj):
+
+    if request.user.admin:
+      return True
+    
+
+class UserPermissionModelLevel(permissions.BasePermission):
+
+  def has_permission(self, request, view):
+
+    if(request.user.is_anonymous == False and request.user.admin):
+      return True
+    
+
 
 
 

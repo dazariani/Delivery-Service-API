@@ -1,31 +1,22 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from .models import CustomUser, Parcel, DeliveryProof
-from .serializers import CustomUserSerializer, DeliveryProofSerializer, ForCourierSerializer, ForCustomerSerializerUpdate, ForAdminSerializer, ForCustomerSerializerWrite
+from .serializers import CustomUserSerializer, DeliveryProofSerializer, ForCourierSerializer, ForCustomerSerializerUpdate, ForAdminSerializer, ForCustomerSerializerWrite, MyTokenObtainPairSerializer
 from rest_framework.views import APIView
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .permissions import ParcelPermissionObjLevel, ParcelPermissionModelLevel, ProofPermissionObjLevel, ProofPermissionModelLevel
+from .permissions import ParcelPermissionObjLevel, ParcelPermissionModelLevel, ProofPermissionObjLevel, ProofPermissionModelLevel, UserPermissionObjLevel, UserPermissionModelLevel
+import json
 
-
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+from uuid import UUID
 
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
-
-        # Add custom claims
-        token['username'] = user.username
-
-        return token
-    
+# MyTokenObtainPairView
 class MyTokenObtainPairView(TokenObtainPairView):
    serializer_class = MyTokenObtainPairSerializer  
 
 
-# Create your views here.
+# Parcel viewSet
 class ParcelViewSet(viewsets.ModelViewSet):
   permission_classes = [ParcelPermissionObjLevel, ParcelPermissionModelLevel]
 
@@ -51,6 +42,7 @@ class ParcelViewSet(viewsets.ModelViewSet):
            return ForAdminSerializer   
 
 
+# Deliveryproof viewSet
 class DeliveryProofViewSet(viewsets.ModelViewSet):
   serializer_class = DeliveryProofSerializer
   permission_classes = [ProofPermissionObjLevel, ProofPermissionModelLevel]
@@ -68,12 +60,26 @@ class DeliveryProofViewSet(viewsets.ModelViewSet):
       return DeliveryProof.objects.all()
        
 
-    
-
+# CustomUser viewSet
 class UserViewSet(viewsets.ModelViewSet):
   queryset = CustomUser.objects.all()
   serializer_class = CustomUserSerializer
+  permission_classes = (UserPermissionObjLevel, UserPermissionModelLevel)
 
+
+
+# Register
+class Register(APIView):
+    def post(self, request):
+        serializer = CustomUserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        print(serializer.data)
+        
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)  
+  
 
 # Current user
 class UserView(APIView):

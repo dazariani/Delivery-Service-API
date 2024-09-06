@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 # Create your models here.
 class CustomUser(AbstractUser):
   admin = models.BooleanField(default=False)
-  customer = models.BooleanField(default=False)
+  customer = models.BooleanField(default=True)
   courier = models.BooleanField(default=False)
 
   
