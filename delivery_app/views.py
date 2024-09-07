@@ -6,7 +6,8 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 from .permissions import ParcelPermissionObjLevel, ParcelPermissionModelLevel, ProofPermissionObjLevel, ProofPermissionModelLevel, UserPermissionObjLevel, UserPermissionModelLevel
 from django_filters.rest_framework import  DjangoFilterBackend
-from rest_framework.filters import OrderingFilter, SearchFilter
+from rest_framework.filters import OrderingFilter
+from rest_framework.parsers import FormParser, MultiPartParser
 
 
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -41,18 +42,19 @@ class ParcelViewSet(viewsets.ModelViewSet):
   def get_serializer_class(self):
         if self.request.method == "POST" and self.request.user.customer:
            return ForCustomerSerializerWrite
-        if self.request.user.customer:
+        elif self.request.user.customer:
             return ForCustomerSerializerUpdate
-        if self.request.user.courier:
+        elif self.request.user.courier:
            return ForCourierSerializer
         else:
-           return ForAdminSerializer   
+          return ForAdminSerializer   
 
 
 # Deliveryproof viewSet
 class DeliveryProofViewSet(viewsets.ModelViewSet):
   serializer_class = DeliveryProofSerializer
   permission_classes = [ProofPermissionObjLevel, ProofPermissionModelLevel]
+  parser_classes = [FormParser, MultiPartParser]
 
 
   # Filtering result
