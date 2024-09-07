@@ -4,12 +4,13 @@ from .serializers import CustomUserSerializer, DeliveryProofSerializer, ForCouri
 from rest_framework.views import APIView
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny, IsAuthenticated
 from .permissions import ParcelPermissionObjLevel, ParcelPermissionModelLevel, ProofPermissionObjLevel, ProofPermissionModelLevel, UserPermissionObjLevel, UserPermissionModelLevel
-import json
+from django_filters.rest_framework import  DjangoFilterBackend
+from rest_framework.filters import OrderingFilter, SearchFilter
+
 
 from rest_framework_simplejwt.views import TokenObtainPairView
-from uuid import UUID
+
 
 # MyTokenObtainPairView
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -20,6 +21,12 @@ class MyTokenObtainPairView(TokenObtainPairView):
 class ParcelViewSet(viewsets.ModelViewSet):
   permission_classes = [ParcelPermissionObjLevel, ParcelPermissionModelLevel]
 
+  # Filtering result
+  filter_backends = [OrderingFilter, DjangoFilterBackend]
+  ordering_fields = ['title', 'created_at']
+  filterset_fields = ['title', 'status']
+  
+  
   def get_queryset(self, *args, **kwargs):
     current_user = self.request.user
     if current_user:
@@ -47,6 +54,13 @@ class DeliveryProofViewSet(viewsets.ModelViewSet):
   serializer_class = DeliveryProofSerializer
   permission_classes = [ProofPermissionObjLevel, ProofPermissionModelLevel]
 
+
+  # Filtering result
+  filter_backends = [OrderingFilter, DjangoFilterBackend]
+  ordering_fields = ['timestamp'] 
+  filterset_fields = ['parcel__title',] 
+
+
   def get_queryset(self, *args, **kwargs):
     current_user = self.request.user
 
@@ -67,6 +81,12 @@ class UserViewSet(viewsets.ModelViewSet):
   permission_classes = (UserPermissionObjLevel, UserPermissionModelLevel)
 
 
+   # Filtering result
+  filter_backends = [OrderingFilter, DjangoFilterBackend]
+  ordering_fields = ['username'] 
+  filterset_fields = ['admin', 'customer', 'courier', 'username'] 
+
+
 
 # Register
 class Register(APIView):
@@ -74,9 +94,6 @@ class Register(APIView):
         serializer = CustomUserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-
-        print(serializer.data)
-        
         
         return Response(serializer.data, status=status.HTTP_200_OK)  
   
